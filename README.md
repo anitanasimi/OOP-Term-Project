@@ -1,4 +1,4 @@
-Anita Jamie Gary 
+Anita, Jamie, Gary 
 Breakdown of Work:
 
 Example below:
