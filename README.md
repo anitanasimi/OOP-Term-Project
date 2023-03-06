@@ -1,5 +1,11 @@
 Breakdown of Work:
 
+Week of Feb 27 to Mar 5
+
+Gary Yu:
+I created and uploaded the database and tables for the web app, based off of Jamie's ERD.
+
+
 Example below:
 March 9th (First Sprint Complete)
 Amy Chan:
