@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+  //env("DATABASE_URL")
+}
+
+model Account {
+  id String @id @default(uuid())
+  username String
+  password String
+  first_name String
+  last_name String
+  email String @unique
+
+  Comment Comment[] @relation("CommentedBy")
+  Tweet Tweet[] @relation("TweetedBy")
+
+  //self referencing relationship of followers and followings
+  followers       Account[]    @relation("UserFollow", )
+  followed        Account[]    @relation("UserFollow")
+
+  //tweets liked by user
+  tweetsLiked Tweet[]
+
+  @@map(name: "accounts")
+}
+
+model Comment {
+  id String @id @default(uuid())
+  description String
+  time DateTime @default(now())
+
+  author Account @relation("CommentedBy", fields: [userId], references: [id])
+  userId String
+
+  tweet Tweet @relation(fields: [tweetId], references: [id])
+  tweetId String
+
+  @@map(name: "comments")
+}
+
+model Tweet {
+  id String @id @default(uuid())
+  description String
+
+  Comment Comment[]
+
+  // optional to have a picture
+  picture Picture? @relation(fields: [pictureId], references: [id])
+  pictureId String? @unique
+
+  //retweet id references another optional existing tweet
+  parentTweetId    String?
+  parentTweet      Tweet?     @relation("TweetRetweet", fields: [parentTweetId], references: [id])
+  retweet         Tweet[]    @relation("TweetRetweet")
+
+  //author id
+  author Account @relation("TweetedBy", fields: [authorId], references: [id])
+  authorId String
+
+  //users who liked this Tweet
+  userLikes Account[]
+
+  @@map(name: "tweets")
+}
+
+model Picture {
+  id String @id @default(uuid())
+  link String
+
+  Tweet Tweet?
+
+  @@map(name: "pictures")
+}
