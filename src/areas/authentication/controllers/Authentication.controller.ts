@@ -2,6 +2,7 @@ import express from "express";
 import IUser from "../../../interfaces/user.interface";
 import IController from "../../../interfaces/controller.interface";
 import { IAuthenticationService } from "../services";
+const passport = require('passport');
 
 class AuthenticationController implements IController {
   public path = "/auth";
@@ -32,16 +33,26 @@ class AuthenticationController implements IController {
   // 🔑 These Authentication methods needs to be implemented by you
   private login = async (req: express.Request, res: express.Response) => {
     console.log(req.body);
-    // res.redirect(`${this.path}/login`);
-    const user = await this.service.getUserByEmailAndPassword(req.body.email, req.body.password);
-    console.log(user);
-    if(user) {
-      console.log("logged in");
-      res.redirect("/auth/login");
-    } else {
-      console.log("failed log in");
-      res.redirect("/auth/login");
-    }
+    // // res.redirect(`${this.path}/login`);
+    // const user = await this.service.getUserByEmailAndPassword(req.body.email, req.body.password);
+    // console.log(user);
+    // if(user) {
+    //   console.log("logged in");
+    //   res.redirect("/auth/login");
+    // } else {
+    //   console.log("failed log in");
+    //   res.redirect("/auth/login");
+    // }
+
+    passport.authenticate("local", {
+      successRedirect: "/auth/login",
+      failureRedirect: "/auth/register",
+      failureMessage: true,
+      //can get that message from req.session.messages
+      //typescript doesn't recognize .messages though, so you need to do something like...
+      //(req.session as any).messages
+  
+    })
   };
   private registration = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.log(req.body);
