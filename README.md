@@ -1,6 +1,9 @@
 # Breakdown of Work
 
 ## Week of Mar 27 to Apr 2
+Gary Yu
+
+1. Completed set up for Passport and Prisma. Can now log in, sign up, and log out. Logged in user data is currently stored in localSessionStorage, so will still need to figure out how to change the store to Redis.
 
 ## Week of Mar 20 to Mar 26
 Gary Yu
