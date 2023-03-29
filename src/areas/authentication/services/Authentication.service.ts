@@ -45,7 +45,7 @@ export class AuthenticationService implements IAuthenticationService {
       }
     }
     catch {
-      throw new Error("findUnique has failed to function.");
+      return false
     }
 
   }
@@ -73,7 +73,7 @@ export class AuthenticationService implements IAuthenticationService {
       }
     }
     catch {
-      throw new Error("Method not implemented.");
+      throw new Error("Implementation error.");
     }
   }
 }

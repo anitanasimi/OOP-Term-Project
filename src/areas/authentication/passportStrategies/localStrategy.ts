@@ -29,7 +29,7 @@ const localStrategy = new LocalStrategy(
   }
 );
 
-
+//start thinking about this now
 passport.serializeUser(function (user: Express.User, done: (err: any, email?: string) => void) {
   done(null, (user as any).email);
 });

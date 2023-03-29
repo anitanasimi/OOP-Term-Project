@@ -1,4 +1,5 @@
 import express from "express";
+import IUser from "../../../interfaces/user.interface";
 import IController from "../../../interfaces/controller.interface";
 import { IAuthenticationService } from "../services";
 
@@ -29,11 +30,11 @@ class AuthenticationController implements IController {
   };
 
   // 🔑 These Authentication methods needs to be implemented by you
-  private login = (req: express.Request, res: express.Response) => {
+  private login = async (req: express.Request, res: express.Response) => {
     console.log(req.body);
     // res.redirect(`${this.path}/login`);
-    const user = this.service.getUserByEmailAndPassword(req.body.email, req.body.password);
-
+    const user = await this.service.getUserByEmailAndPassword(req.body.email, req.body.password);
+    console.log(user);
     if(user) {
       console.log("logged in");
       res.redirect("/auth/login");
@@ -42,7 +43,28 @@ class AuthenticationController implements IController {
       res.redirect("/auth/login");
     }
   };
-  private registration = async (req: express.Request, res: express.Response, next: express.NextFunction) => {};
+  private registration = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.log(req.body);
+
+    const newUser: IUser = {
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+      first_name: req.body.firstName,
+      last_name: req.body.lastName,
+    }
+
+    const successfulRegistration = await this.service.createUser(newUser);
+
+    if(successfulRegistration) {
+      console.log("user signed up")
+      res.redirect("/auth/login");
+    } else {
+      console.log("registration fail")
+      res.redirect("/auth/register");
+    }
+
+  };
   private logout = async (req: express.Request, res: express.Response) => {};
 }
 
