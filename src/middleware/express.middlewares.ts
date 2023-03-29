@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import session from "express-session";
 import morgan from "morgan";
-// import RedisStore from "connect-redis";
+import RedisStore from "connect-redis";
 // import {createClient} from "redis";
 const Redis = require("ioredis");
 require('dotenv').config();
@@ -30,7 +30,7 @@ module.exports = (app) => {
   app.use(
     session({
       secret: "secret",
-      store: redis,
+      //store: redis,
       resave: false,
       saveUninitialized: false,
       cookie: {

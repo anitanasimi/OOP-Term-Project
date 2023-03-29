@@ -23,7 +23,7 @@ model Account {
   Tweet Tweet[] @relation("TweetedBy")
 
   //self referencing relationship of followers and followings
-  followers       Account[]    @relation("UserFollow", )
+  followers       Account[]    @relation("UserFollow")
   followed        Account[]    @relation("UserFollow")
 
   //tweets liked by user

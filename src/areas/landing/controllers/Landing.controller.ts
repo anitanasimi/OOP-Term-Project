@@ -14,7 +14,7 @@ class LandingController implements IController {
   private initializeRoutes() {
     this.router.get(`${this.path}/`, this.showLandingPage);
 
-    this.router.get(`${this.path}/testing`, async (req, res) => {
+    this.router.get(`${this.path}testing`, async (req, res) => {
       try {
         // const newUser = await this.prisma.account.create({
         //   data: {
@@ -35,8 +35,16 @@ class LandingController implements IController {
     })
   }
 
-  private showLandingPage = (_: express.Request, res: express.Response) => {
-    res.render("landing/views/index");
+  private showLandingPage = (req: express.Request, res: express.Response) => {
+    let user;
+    
+    if(req.user) {
+      console.log("triggered?")
+      user = req.user;
+    } else {
+      user = false;
+    }
+    res.render("landing/views/index", {user: user});
   };
 }
 

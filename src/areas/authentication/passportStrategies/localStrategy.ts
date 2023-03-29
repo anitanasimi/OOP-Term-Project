@@ -1,12 +1,12 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { AuthenticationService } from "../services";
-import PassportStrategy from "C:/Users/melch/Documents/Programming/COMP 2523/OOP-Term-Project/src/interfaces/passportstrategy";
+import PassportStrategy from "../../../interfaces/passportstrategy";
 
 const authServ = new AuthenticationService;
 
 //LocalStrategy is a class
-const localStrategy = new LocalStrategy(
+const localLogin = new LocalStrategy(
   {
     //here, you are renaming usernameField as email and passwordField as password
     //that's why down below, you are able to then use email and password as variables
@@ -16,16 +16,14 @@ const localStrategy = new LocalStrategy(
   //this overwrites the normal functioning of LocalStrategy
   //here, req.body.email is passed into email. The same is done for password.
   //by default though, local uses usernames. Thus, you need to feed a specific function into user in order to correctly format it for usage. That's what the getUserByEmailAndPassword() is for.
-  (email, password, done) => {
-    const user = authServ.getUserByEmailAndPassword(email, password);
-
-    if(!user) {
-      done(null, false, {
-        message: `Incorrect email or password.`,
+  async (email, password, done) => {
+    const user = await authServ.getUserByEmailAndPassword(email, password);
+    //async await used because of how prisma stuff functions?
+    return user
+      ? done(null, user)
+      : done(null, false, {
+        message: "Your login details are not valid. Please try again."
       })
-    } else if (user) {
-      done(null, user)
-    }
   }
 );
 
@@ -46,9 +44,11 @@ passport.deserializeUser(function (email: string, done: (err: any, user?: Expres
 
 const passportLocalStrategy: PassportStrategy = {
   name: 'local',
-  strategy: localStrategy,
+  strategy: localLogin,
 };
 //you export passportLocalStrategy so that you can import it into passportMiddleware.ts
 //from inside there, you need to add passportLocalStrategy into passportConfig.addStrategies()
 //also to note: github and basically every other login system will give you the user id, so deserializedUser basically always works
 export default passportLocalStrategy;
+
+//module.exports = passport.use(localLogin)

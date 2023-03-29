@@ -1,6 +1,6 @@
 import passport from "passport";
 
-import PassportStrategy from "C:/Users/melch/Documents/Programming/COMP 2523/OOP-Term-Project/src/interfaces/passportstrategy";
+import PassportStrategy from "../../../interfaces/passportstrategy";
 
 
 //----------------------------------------
