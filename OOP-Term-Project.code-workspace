@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../prisma"
+		},
+		{
+			"path": "../passport"
+		}
+	],
+	"settings": {}
+}
