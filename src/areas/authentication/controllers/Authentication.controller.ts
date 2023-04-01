@@ -90,7 +90,7 @@ class AuthenticationController implements IController {
       console.log(err);
     })
 
-    res.redirect("/");
+    res.redirect("/auth/login");
   };
 }
 
