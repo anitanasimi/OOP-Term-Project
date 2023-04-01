@@ -5,6 +5,10 @@ Gary Yu
 
 1. Completed set up for Passport and Prisma. Can now log in, sign up, and log out. Logged in user data is currently stored in localSessionStorage, so will still need to figure out how to change the store to Redis.
 
+2. Enabled error messages to be sent to error.log by altering the errorhandler middleware.
+
+3. Passwords stored in database are now hashed by bcrypt.
+
 ## Week of Mar 20 to Mar 26
 Gary Yu
 
