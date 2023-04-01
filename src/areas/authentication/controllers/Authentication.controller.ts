@@ -5,6 +5,7 @@ import { IAuthenticationService } from "../services";
 import { ensureAuthenticated, forwardAuthenticated } from "../checkAuth";
 const passport = require('passport');
 import session from "express-session";
+import EmailAlreadyExistsException from "../../../exceptions/EmailAlreadyExists";
 
 class AuthenticationController implements IController {
   public path = "/auth";
@@ -66,22 +67,31 @@ class AuthenticationController implements IController {
   private registration = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.log(req.body);
 
-    const newUser: IUser = {
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
-    }
+    const uniqueEmailCheck = await this.service.findUserByEmail(req.body.email);
 
-    const successfulRegistration = await this.service.createUser(newUser);
-
-    if(successfulRegistration) {
-      console.log("user signed up")
-      res.redirect("/auth/login");
-    } else {
-      console.log("registration fail")
+    if(uniqueEmailCheck) {
+      const emailErr = new EmailAlreadyExistsException(req.body.email);
+      //console.error(new Date() + " " + emailErr.status + " " + emailErr.message);
+      next(emailErr);
       res.redirect("/auth/register");
+    } else {
+      const newUser: IUser = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        first_name: req.body.firstName,
+        last_name: req.body.lastName,
+      }
+  
+      const successfulRegistration = await this.service.createUser(newUser);
+  
+      if(successfulRegistration) {
+        console.log("user signed up")
+        res.redirect("/auth/login");
+      } else {
+        console.log("registration fail")
+        res.redirect("/auth/register");
+      }
     }
 
   };

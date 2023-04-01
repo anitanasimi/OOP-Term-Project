@@ -1,7 +1,9 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import path from "path";
 import session from "express-session";
 import morgan from "morgan";
+
+const fs = require('fs');
 
 //const Redis = require("ioredis");
 
@@ -52,4 +54,5 @@ module.exports = (app) => {
       },
     })
   );
+
 };
