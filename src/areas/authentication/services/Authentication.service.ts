@@ -1,6 +1,9 @@
 import IUser from "../../../interfaces/user.interface";
 import { IAuthenticationService } from "./IAuthentication.service";
 import { PrismaClient } from '@prisma/client'
+const bcrypt = require('bcrypt');
+
+const saltRounds = 10;
 
 // ❗️ Implement this class much later, once everything works fine with your mock db
 export class AuthenticationService implements IAuthenticationService {
@@ -38,7 +41,7 @@ export class AuthenticationService implements IAuthenticationService {
         },
       })
 
-      if (user.password == password) {
+      if (bcrypt.compare(password, user.password)) {
         return user
       } else {
         return false;
@@ -59,16 +62,27 @@ export class AuthenticationService implements IAuthenticationService {
       if(userExist) {
         return false;
       } else {
+        let passwordHash;
+
+        await bcrypt.genSalt(saltRounds)
+          .then(salt => {
+            return bcrypt.hash(user.email, salt);
+          })
+          .then(hash => {
+            passwordHash = hash;
+          })
+          .catch(err => console.log(err));
+
         const newUser = await this.prisma.account.create({
           data: {
             username: user.username,
-            password: user.password,
-            first_name: user.first_name,
+            password: passwordHash,
+            first_name: user.first_name,  
             last_name: user.last_name,
             email: user.email
           },
         })
-  
+        //madmax
         return newUser;
       }
     }
