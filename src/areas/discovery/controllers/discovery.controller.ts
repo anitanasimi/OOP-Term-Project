@@ -18,20 +18,19 @@ class DiscoveryController implements IController {
   }
 
   private search = (req: Request, res: Response) => {
+    const searchKeyword = req.query.query.toString();
+    const users = this.discoveryService.filterUsers(searchKeyword);
+    const posts = this.discoveryService.fitlerPosts(searchKeyword);
+    const postResults = [];
 
-    const searchKeyword = req.query.query.toString()
+    if (posts) {
+      posts.forEach(post => {
+        const author = this.discoveryService.getUserByUsername(post.userId);
+        postResults.push({ post: post, author: author });
+      });
+    }
 
-    console.log("finding posts with " + searchKeyword)
-    const posts = this.discoveryService.fitlerPosts(searchKeyword)
-    console.log("here's what I found:")
-    console.log(posts)
-
-    console.log("finding users with " + searchKeyword)
-    const users = this.discoveryService.filterUsers(searchKeyword)
-    console.log("here's what I found:")
-    console.log(users)
-
-    res.render("discovery/views/search", { posts, users });
+    res.render("discovery/views/search", { postResults, users });
   };
 
 }

@@ -5,6 +5,18 @@ import { UserViewModel } from "../views/UserViewModel"
 import { database } from "../../../model/fakeDB";
 
 export default class MockDiscoveryService implements IDiscoveryService {
+  getUserByUsername(username: string): UserViewModel {
+    try {
+      for (const user of database.users) {
+        if (user.username == username) {
+          let foundUser = new UserViewModel(user)
+          return foundUser
+        }
+      }
+    }
+    catch { throw new Error("Error connecting to database") };
+  }
+
   fitlerPosts(keyword: string): IPost[] {
     try {
       const foundPosts = [];
@@ -17,7 +29,7 @@ export default class MockDiscoveryService implements IDiscoveryService {
       }
       return foundPosts;
     } catch {
-      throw new Error("Error connection to database");
+      throw new Error("Error connecting to database");
     }
   }
 
@@ -36,7 +48,7 @@ export default class MockDiscoveryService implements IDiscoveryService {
       }
       return foundUsers;
     } catch {
-      throw new Error("Error connection to database");
+      throw new Error("Error connecting to database");
     }
   }
 }
