@@ -5,11 +5,12 @@ import { UserViewModel } from "../views/UserViewModel"
 import { database } from "../../../model/fakeDB";
 
 export default class MockDiscoveryService implements IDiscoveryService {
-  getUserByUsername(username: string): UserViewModel {
+  getUserByUserId(username: string): IUser {
     try {
       for (const user of database.users) {
         if (user.username == username) {
-          let foundUser = new UserViewModel(user)
+          // let foundUser = new UserViewModel(user)
+          let foundUser = user
           return foundUser
         }
       }
@@ -50,5 +51,19 @@ export default class MockDiscoveryService implements IDiscoveryService {
     } catch {
       throw new Error("Error connecting to database");
     }
+  }
+
+  follow(loggedInUser, targetUser) {
+    const followingId = targetUser.id
+    for (const user of database.users) {
+      if (user.username == loggedInUser) {
+        if (!user.following.includes(followingId)) {
+          user.following.push(followingId)
+        }
+      }
+    }
+
+    // if (!follower.following.includes(followingId))
+    // follower.following.push(followingId)
   }
 }

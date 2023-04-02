@@ -3,9 +3,11 @@ import IUser from "../../../interfaces/user.interface";
 import { UserViewModel } from "../views/UserViewModel";
 
 export default interface IDiscoveryService {
-  getUserByUsername(username: string): UserViewModel
+  getUserByUserId(username: string): IUser
 
   fitlerPosts(keyword: string): IPost[];
 
   filterUsers(keyword: string): IUser[];
+
+  follow(user: IUser, target: IUser)
 }

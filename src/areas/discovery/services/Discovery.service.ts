@@ -4,7 +4,7 @@ import { UserViewModel } from "../views/UserViewModel";
 import IDiscoveryService from "./IDiscoveryService";
 
 export default class DiscoveryService implements IDiscoveryService {
-  getUserByUsername(username: string): UserViewModel {
+  getUserByUserId(username: string): IUser {
   throw new Error("Method not implemented.");
   }
 
@@ -12,6 +12,10 @@ export default class DiscoveryService implements IDiscoveryService {
     throw new Error("Method not implemented.");
   }
   filterUsers(keyword: string): IUser[] {
+    throw new Error("Method not implemented.");
+  }
+
+  follow(user: IUser, target: IUser) {
     throw new Error("Method not implemented.");
   }
 }
