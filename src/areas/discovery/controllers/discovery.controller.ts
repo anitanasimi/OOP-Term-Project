@@ -18,12 +18,20 @@ class DiscoveryController implements IController {
   }
 
   private search = (req: Request, res: Response) => {
+
     const searchKeyword = req.query.query.toString()
+
     console.log("finding posts with " + searchKeyword)
     const posts = this.discoveryService.fitlerPosts(searchKeyword)
     console.log("here's what I found:")
     console.log(posts)
-    res.render("discovery/views/search", { posts, });
+
+    console.log("finding users with " + searchKeyword)
+    const users = this.discoveryService.filterUsers(searchKeyword)
+    console.log("here's what I found:")
+    console.log(users)
+
+    res.render("discovery/views/search", { posts, users });
   };
 
 }
