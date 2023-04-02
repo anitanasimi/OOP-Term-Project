@@ -7,7 +7,9 @@ Gary Yu
 
 2. Enabled error messages to be sent to error.log by altering the errorhandler middleware.
 
-3. Passwords stored in database are now hashed by bcrypt.
+3. Passwords stored in database are now hashed by bcrypt. As well, authenication is done with bcrypt compare sync.
+
+4. Error messages show up in webpage following any problems with user login or registration (incorrect credentials or non-unique email).
 
 ## Week of Mar 20 to Mar 26
 Gary Yu
