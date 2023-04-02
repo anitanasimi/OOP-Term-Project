@@ -10,4 +10,6 @@ export default interface IDiscoveryService {
   filterUsers(keyword: string): IUser[];
 
   follow(user: IUser, target: IUser)
+
+  unfollow(user: IUser, target: IUser)
 }

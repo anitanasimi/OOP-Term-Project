@@ -56,6 +56,17 @@ export default class MockDiscoveryService implements IDiscoveryService {
   follow(loggedInUser, targetUser) {
     const followingId = targetUser.id
     for (const user of database.users) {
+      if (user.username == loggedInUser.username) {
+        if (!user.following.includes(followingId)) {
+          user.following.push(followingId)
+        }
+      }
+    }
+  }
+
+  unfollow(loggedInUser, targetUser) {
+    const followingId = targetUser.id
+    for (const user of database.users) {
       if (user.username == loggedInUser) {
         if (!user.following.includes(followingId)) {
           user.following.push(followingId)

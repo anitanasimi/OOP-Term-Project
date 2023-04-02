@@ -18,4 +18,8 @@ export default class DiscoveryService implements IDiscoveryService {
   follow(user: IUser, target: IUser) {
     throw new Error("Method not implemented.");
   }
+
+  unfollow(user: IUser, target: IUser) {
+    throw new Error("Method not implemented.");
+  }
 }

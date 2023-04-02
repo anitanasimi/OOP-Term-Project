@@ -18,7 +18,7 @@ class DiscoveryController implements IController {
   private initializeRoutes() {
     this.router.get(`${this.path}search`, this.search);
     this.router.get(`${this.path}user/:id/follow`, this.follow);
-    // this.router.get(`${this.path}search`, this.search);
+    this.router.get(`${this.path}user/:id/unfollow`, this.unfollow);
   }
 
   private search = (req: Request, res: Response) => {
@@ -37,9 +37,21 @@ class DiscoveryController implements IController {
   };
 
   private follow = (req: Request, res: Response) => {
-    const user = loggedInUser
-    const target = this.discoveryService.getUserByUserId(req.params.id)
-    user.following.push(target.username)
+    const follower = loggedInUser
+    const targetUser = this.discoveryService.getUserByUserId(req.params.id)
+    if (!follower.following.includes(targetUser.username)) {
+      follower.following.push(targetUser.username)
+    }
+    res.redirect("/posts")
+  }
+
+  private unfollow = (req: Request, res: Response) => {
+    const follower = loggedInUser
+    const targetUser = this.discoveryService.getUserByUserId(req.params.id)
+    if (follower.following.includes(targetUser.username)) {
+      const index = follower.following.indexOf(targetUser.username)
+      follower.following.splice(index, 1)
+    }
     res.redirect("/posts")
   }
 
