@@ -8,7 +8,7 @@ export default class MockDiscoveryService implements IDiscoveryService {
       const foundPosts = [];
       for (const user of database.users) {
         for (const post of user.posts) {
-          if (post.message.includes(keyword)) {
+          if (post.message.toLocaleLowerCase().includes(keyword)) {
             foundPosts.push(post);
           }
         }
