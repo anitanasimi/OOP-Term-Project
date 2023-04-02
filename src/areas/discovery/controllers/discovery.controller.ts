@@ -6,17 +6,24 @@ import { post, posts } from "../../../model/fakeDB";
 class DiscoveryController implements IController {
   public path = "/search";
   public router = Router();
+  private discoveryService: IDiscoveryService;
 
-  constructor(postService: IDiscoveryService) {
+  constructor(discoveryService: IDiscoveryService) {
     this.initializeRoutes();
+    this.discoveryService = discoveryService
   }
 
   private initializeRoutes() {
-    this.router.get(this.path, this.filterPosts);
+    this.router.get(this.path, this.search);
   }
 
-  private filterPosts = (_: Request, res: Response) => {
-    res.render("discovery/views/search", { posts });
+  private search = (req: Request, res: Response) => {
+    const searchKeyword = req.query.query.toString()
+    console.log("finding posts with " + searchKeyword)
+    const posts = this.discoveryService.fitlerPosts(searchKeyword)
+    console.log("here's what I found:")
+    console.log(posts)
+    res.render("discovery/views/search", { posts, });
   };
 
 }
