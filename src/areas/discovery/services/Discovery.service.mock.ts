@@ -1,6 +1,7 @@
 import IPost from "../../../interfaces/post.interface";
 import IUser from "../../../interfaces/user.interface";
 import IDiscoveryService from "./IDiscoveryService";
+import { UserViewModel } from "../views/UserViewModel"
 import { database } from "../../../model/fakeDB";
 
 export default class MockDiscoveryService implements IDiscoveryService {
@@ -29,7 +30,8 @@ export default class MockDiscoveryService implements IDiscoveryService {
           user.lastName.toLocaleLowerCase().includes(keyword) ||
           user.username.toLocaleLowerCase().includes(keyword)
         ) {
-          foundUsers.push(user);
+          let foundUser = new UserViewModel(user)
+          foundUsers.push(foundUser);
         }
       }
       return foundUsers;
