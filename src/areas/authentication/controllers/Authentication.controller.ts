@@ -25,12 +25,25 @@ class AuthenticationController implements IController {
     this.router.get(`${this.path}/logout`, ensureAuthenticated, this.logout);
   }
 
-  private showLoginPage = (_: express.Request, res: express.Response) => {
-    res.render("authentication/views/login");
+  private showLoginPage = (req: express.Request, res: express.Response) => {
+    let messages;
+
+    if((req.session as any).messages) {
+       messages = (req.session as any).messages;
+       (req.session as any).messages = "";
+    }
+    res.render("authentication/views/login", {messages: messages});
   };
 
-  private showRegistrationPage = (_: express.Request, res: express.Response) => {
-    res.render("authentication/views/register");
+  private showRegistrationPage = (req: express.Request, res: express.Response) => {
+    let messages;
+
+    if((req.session as any).messages) {
+       messages = (req.session as any).messages;
+       (req.session as any).messages = "";
+    }
+
+    res.render("authentication/views/register", {messages: messages});
   };
 
   // 🔑 These Authentication methods needs to be implemented by you
@@ -56,7 +69,7 @@ class AuthenticationController implements IController {
   // };
   private login = passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/auth/register",
+    failureRedirect: "/auth/login",
     failureMessage: true,
     //can get that message from req.session.messages
     //typescript doesn't recognize .messages though, so you need to do something like...
@@ -71,7 +84,8 @@ class AuthenticationController implements IController {
 
     if(uniqueEmailCheck) {
       const emailErr = new EmailAlreadyExistsException(req.body.email);
-      //console.error(new Date() + " " + emailErr.status + " " + emailErr.message);
+      
+      (req.session as any).messages = [`User with email ${req.body.email} already exists.`];
       next(emailErr);
       res.redirect("/auth/register");
     } else {

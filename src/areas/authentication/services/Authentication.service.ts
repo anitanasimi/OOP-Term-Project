@@ -35,19 +35,24 @@ export class AuthenticationService implements IAuthenticationService {
   async getUserByEmailAndPassword(email: string, password: string): Promise<IUser | boolean> {
     // 🚀 Talk to your real database here
     try {
-      const user = await this.prisma.account.findUnique({
+      let user = await this.prisma.account.findUnique({
         where: {
           email: email,
         },
       })
 
-      if (bcrypt.compare(password, user.password)) {
-        return user
+      let result = this.checkPassword(password, user.password);
+      
+      console.log("What's the result? " + result);
+
+      if(user && result) {
+        return user;
       } else {
         return false;
       }
     }
     catch {
+      console.log("caught");
       return false
     }
 
@@ -66,7 +71,7 @@ export class AuthenticationService implements IAuthenticationService {
 
         await bcrypt.genSalt(saltRounds)
           .then(salt => {
-            return bcrypt.hash(user.email, salt);
+            return bcrypt.hash(user.password, salt);
           })
           .then(hash => {
             passwordHash = hash;
@@ -82,12 +87,21 @@ export class AuthenticationService implements IAuthenticationService {
             email: user.email
           },
         })
-        //madmax
+
         return newUser;
       }
     }
     catch {
       throw new Error("Implementation error.");
     }
+  }
+
+  private checkPassword(password: string, hash: string): boolean {
+    console.log("Is it happening?")
+    const result = bcrypt.compareSync(password, hash, (err: string, res: boolean) => {
+      return res
+    })
+
+    return result;
   }
 }

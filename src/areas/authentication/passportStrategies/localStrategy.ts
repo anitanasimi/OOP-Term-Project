@@ -19,6 +19,7 @@ const localLogin = new LocalStrategy(
   async (email, password, done) => {
     const user = await authServ.getUserByEmailAndPassword(email, password);
     //async await used because of how prisma stuff functions?
+    
     return user
       ? done(null, user)
       : done(null, false, {
