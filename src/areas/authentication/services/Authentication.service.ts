@@ -1,6 +1,9 @@
 import IUser from "../../../interfaces/user.interface";
 import { IAuthenticationService } from "./IAuthentication.service";
 import { PrismaClient } from '@prisma/client'
+const bcrypt = require('bcrypt');
+
+const saltRounds = 10;
 
 // ❗️ Implement this class much later, once everything works fine with your mock db
 export class AuthenticationService implements IAuthenticationService {
@@ -32,19 +35,24 @@ export class AuthenticationService implements IAuthenticationService {
   async getUserByEmailAndPassword(email: string, password: string): Promise<IUser | boolean> {
     // 🚀 Talk to your real database here
     try {
-      const user = await this.prisma.account.findUnique({
+      let user = await this.prisma.account.findUnique({
         where: {
           email: email,
         },
       })
 
-      if (user.password == password) {
-        return user
+      let result = this.checkPassword(password, user.password);
+      
+      console.log("What's the result? " + result);
+
+      if(user && result) {
+        return user;
       } else {
         return false;
       }
     }
     catch {
+      console.log("caught");
       return false
     }
 
@@ -59,21 +67,41 @@ export class AuthenticationService implements IAuthenticationService {
       if(userExist) {
         return false;
       } else {
+        let passwordHash;
+
+        await bcrypt.genSalt(saltRounds)
+          .then(salt => {
+            return bcrypt.hash(user.password, salt);
+          })
+          .then(hash => {
+            passwordHash = hash;
+          })
+          .catch(err => console.log(err));
+
         const newUser = await this.prisma.account.create({
           data: {
             username: user.username,
-            password: user.password,
-            first_name: user.first_name,
+            password: passwordHash,
+            first_name: user.first_name,  
             last_name: user.last_name,
             email: user.email
           },
         })
-  
+
         return newUser;
       }
     }
     catch {
       throw new Error("Implementation error.");
     }
+  }
+
+  private checkPassword(password: string, hash: string): boolean {
+    console.log("Is it happening?")
+    const result = bcrypt.compareSync(password, hash, (err: string, res: boolean) => {
+      return res
+    })
+
+    return result;
   }
 }

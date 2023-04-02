@@ -5,6 +5,7 @@ import { IAuthenticationService } from "../services";
 import { ensureAuthenticated, forwardAuthenticated } from "../checkAuth";
 const passport = require('passport');
 import session from "express-session";
+import EmailAlreadyExistsException from "../../../exceptions/EmailAlreadyExists";
 
 class AuthenticationController implements IController {
   public path = "/auth";
@@ -24,12 +25,25 @@ class AuthenticationController implements IController {
     this.router.get(`${this.path}/logout`, ensureAuthenticated, this.logout);
   }
 
-  private showLoginPage = (_: express.Request, res: express.Response) => {
-    res.render("authentication/views/login");
+  private showLoginPage = (req: express.Request, res: express.Response) => {
+    let messages;
+
+    if((req.session as any).messages) {
+       messages = (req.session as any).messages;
+       (req.session as any).messages = "";
+    }
+    res.render("authentication/views/login", {messages: messages});
   };
 
-  private showRegistrationPage = (_: express.Request, res: express.Response) => {
-    res.render("authentication/views/register");
+  private showRegistrationPage = (req: express.Request, res: express.Response) => {
+    let messages;
+
+    if((req.session as any).messages) {
+       messages = (req.session as any).messages;
+       (req.session as any).messages = "";
+    }
+
+    res.render("authentication/views/register", {messages: messages});
   };
 
   // 🔑 These Authentication methods needs to be implemented by you
@@ -55,7 +69,7 @@ class AuthenticationController implements IController {
   // };
   private login = passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/auth/register",
+    failureRedirect: "/auth/login",
     failureMessage: true,
     //can get that message from req.session.messages
     //typescript doesn't recognize .messages though, so you need to do something like...
@@ -66,22 +80,32 @@ class AuthenticationController implements IController {
   private registration = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.log(req.body);
 
-    const newUser: IUser = {
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
-    }
+    const uniqueEmailCheck = await this.service.findUserByEmail(req.body.email);
 
-    const successfulRegistration = await this.service.createUser(newUser);
-
-    if(successfulRegistration) {
-      console.log("user signed up")
-      res.redirect("/auth/login");
-    } else {
-      console.log("registration fail")
+    if(uniqueEmailCheck) {
+      const emailErr = new EmailAlreadyExistsException(req.body.email);
+      
+      (req.session as any).messages = [`User with email ${req.body.email} already exists.`];
+      next(emailErr);
       res.redirect("/auth/register");
+    } else {
+      const newUser: IUser = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        first_name: req.body.firstName,
+        last_name: req.body.lastName,
+      }
+  
+      const successfulRegistration = await this.service.createUser(newUser);
+  
+      if(successfulRegistration) {
+        console.log("user signed up")
+        res.redirect("/auth/login");
+      } else {
+        console.log("registration fail")
+        res.redirect("/auth/register");
+      }
     }
 
   };
@@ -90,7 +114,7 @@ class AuthenticationController implements IController {
       console.log(err);
     })
 
-    res.redirect("/");
+    res.redirect("/auth/login");
   };
 }
 
