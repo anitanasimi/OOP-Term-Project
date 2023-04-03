@@ -1,4 +1,6 @@
 import IDatabase from "../interfaces/database.interface.ts";
+import { Posts } from "./Posts";
+import { Comments } from "./Comments.js";
 
 // Please feel free to not use this, or completely change it to your liking. It is just an example.
 const database: IDatabase = {
