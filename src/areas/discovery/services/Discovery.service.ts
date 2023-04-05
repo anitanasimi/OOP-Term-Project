@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import IPost from "../../../interfaces/post.interface";
 import IUser from "../../../interfaces/user.interface";
 import IDiscoveryService from "./IDiscoveryService";
@@ -6,12 +6,15 @@ import IDiscoveryService from "./IDiscoveryService";
 export default class DiscoveryService implements IDiscoveryService {
   public prisma = new PrismaClient();
 
-
   async getUserByUserId(id: string): Promise<IUser> {
     try {
       const user = await this.prisma.account.findUnique({
         where: {
           id: id
+        },
+        include: {
+          followers: true,
+          followed: true
         }
       })
       return (user ? user : null)
@@ -62,6 +65,10 @@ export default class DiscoveryService implements IDiscoveryService {
             { last_name: { contains: keyword } }
           ]
         },
+        include: {
+          followers: true,
+          followed: true
+        }
       })
 
       return (users ? users : null)
@@ -71,11 +78,51 @@ export default class DiscoveryService implements IDiscoveryService {
     }
   }
 
-  follow(user: IUser, target: IUser) {
-    throw new Error("Method not implemented.");
+  async addToFollowed(followerId: string, accountToFollowId: string) {
+    try {
+      await this.prisma.account.update({
+        where: { id: followerId },
+        data: {
+          followed: {
+            connect: {
+              id: accountToFollowId
+            }
+          }
+        }
+      });
+    } catch {
+      throw new Error("addToFollowed has failed to function");
+    }
+  }
+
+  async addToFollowers(followedAccountId: string, followerId: string) {
+    try {
+      await this.prisma.account.update({
+        where: { id: followedAccountId },
+        data: {
+          followers: {
+            connect: {
+              id: followerId
+            }
+          }
+        }
+      });
+    } catch {
+      throw new Error("addToFollowers has failed to function");
+    }
+  }
+
+  async follow(loggedInUser: IUser, targetUser: IUser) {
+    try {
+      await this.addToFollowed(loggedInUser.id, targetUser.id)
+      await this.addToFollowers(targetUser.id, loggedInUser.id)
+    } catch {
+
+      throw new Error("follow has failed to function");
+    }
   }
 
   unfollow(user: IUser, target: IUser) {
-    throw new Error("Method not implemented.");
+    throw new Error("unfollow has failed to function");
   }
 }
