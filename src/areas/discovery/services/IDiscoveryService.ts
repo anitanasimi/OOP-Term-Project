@@ -22,8 +22,4 @@ export default interface IDiscoveryService {
 
   unfollow(user: IUser, target: IUser)
 
-  setRecentUrl(url: string)
-
-  getRecentUrl(): string
-
 }
