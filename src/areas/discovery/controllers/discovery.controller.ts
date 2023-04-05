@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction, Router } from "express";
+import { Request, Response, Router } from "express";
 import IController from "../../../interfaces/controller.interface";
 import IDiscoveryService from "../services/IDiscoveryService";
 import IUser from "../../../interfaces/user.interface";
-import { database, post, posts } from "../../../model/fakeDB";
 
 class DiscoveryController implements IController {
   public path = "/";
@@ -18,7 +17,7 @@ class DiscoveryController implements IController {
   private initializeRoutes() {
     this.router.get(`${this.path}search`, this.search);
     this.router.get(`${this.path}user/:id/follow`, this.follow);
-    // this.router.get(`${this.path}user/:id/unfollow`, this.unfollow);
+    this.router.get(`${this.path}user/:id/unfollow`, this.unfollow);
   }
 
   private search = async (req: Request, res: Response) => {
@@ -27,9 +26,6 @@ class DiscoveryController implements IController {
 
     let loggedInUser = await req.user as IUser
     loggedInUser = await this.discoveryService.getUserByUserId(loggedInUser.id)
-    // console.log("followed:")
-    // console.log(loggedInUser.followed)
-    // const loggedInUserFollowedList = loggedInUser.followed
 
     const searchKeyword = req.query.query.toString();
 
@@ -47,7 +43,19 @@ class DiscoveryController implements IController {
     await this.discoveryService.addToFollowed(loggedInUser.id, accountToFollowId)
     await this.discoveryService.addToFollowers(accountToFollowId, loggedInUser.id)
 
-    res.redirect("/posts")
+    const lastSearchPageUrl = this.getRecentUrl()
+    res.redirect(lastSearchPageUrl)
+  }
+
+  private unfollow = async (req: Request, res: Response) => {
+    const loggedInUser = await req.user as IUser
+    const accountToUnfollowId = await req.params.id
+
+    await this.discoveryService.removeFromFollowed(loggedInUser.id, accountToUnfollowId)
+    await this.discoveryService.removeFromFollowers(accountToUnfollowId, loggedInUser.id)
+
+    const lastSearchPageUrl = this.getRecentUrl()
+    res.redirect(lastSearchPageUrl)
   }
 
   private setRecentUrl = (url) => {
@@ -57,17 +65,6 @@ class DiscoveryController implements IController {
   private getRecentUrl = () => {
     return this.url
   }
-
-  // private unfollow = (req: Request, res: Response) => {
-  //   const follower = loggedInUser
-  //   const targetUser = this.discoveryService.getUserByUserId(req.params.id)
-  //   if (follower.following.includes(targetUser.username)) {
-  //     const index = follower.following.indexOf(targetUser.username)
-  //     follower.following.splice(index, 1)
-  //   }
-  //   res.redirect("/posts")
-  // }
-
 }
 
 export default DiscoveryController;

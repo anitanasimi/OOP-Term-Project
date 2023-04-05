@@ -12,7 +12,11 @@ export default interface IDiscoveryService {
 
   addToFollowed(followerId: string, accountToFollowId: string)
 
+  removeFromFollowed(followerId: string, accountToFollowId: string)
+
   addToFollowers(followedAccountId: string, followerId: string)
+
+  removeFromFollowers(followerId: string, accountToFollowId: string)
 
   follow(user: IUser, target: IUser)
 

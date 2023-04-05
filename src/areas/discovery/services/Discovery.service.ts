@@ -14,7 +14,7 @@ export default class DiscoveryService implements IDiscoveryService {
         },
         include: {
           followers: true,
-          followed: true
+          followed: true,
         }
       })
       return (user ? user : null)
@@ -95,6 +95,23 @@ export default class DiscoveryService implements IDiscoveryService {
     }
   }
 
+  async removeFromFollowed(followerId: string, accountToFollowId: string) {
+    try {
+      await this.prisma.account.update({
+        where: { id: followerId },
+        data: {
+          followed: {
+            disconnect: {
+              id: accountToFollowId
+            }
+          }
+        }
+      });
+    } catch {
+      throw new Error("addToFollowers has failed to function");
+    }
+  }
+
   async addToFollowers(followedAccountId: string, followerId: string) {
     try {
       await this.prisma.account.update({
@@ -102,6 +119,23 @@ export default class DiscoveryService implements IDiscoveryService {
         data: {
           followers: {
             connect: {
+              id: followerId
+            }
+          }
+        }
+      });
+    } catch {
+      throw new Error("addToFollowers has failed to function");
+    }
+  }
+
+  async removeFromFollowers(followedAccountId: string, followerId: string) {
+    try {
+      await this.prisma.account.update({
+        where: { id: followedAccountId },
+        data: {
+          followers: {
+            disconnect: {
               id: followerId
             }
           }
