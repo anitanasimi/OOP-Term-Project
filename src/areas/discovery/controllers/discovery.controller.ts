@@ -33,7 +33,7 @@ class DiscoveryController implements IController {
     const users = await this.discoveryService.filterUsers(searchKeyword);
 
     console.log("rendering new page")
-    res.render("discovery/views/searchTest", { posts, users, loggedInUser });
+    res.render("discovery/views/search", { posts, users, loggedInUser });
   };
 
   private follow = async (req: Request, res: Response) => {
