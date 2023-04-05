@@ -7,8 +7,8 @@ const database: IDatabase = {
       id: "1",
       email: "gates@gmail.com",
       password: "gates123",
-      firstName: "Bill",
-      lastName: "Gates",
+      first_name: "Bill",
+      last_name: "Gates",
       username: "billgates",
       posts: [
         {
@@ -35,8 +35,8 @@ const database: IDatabase = {
       username: "james123",
       email: "james123@gmail.com",
       password: "james123",
-      firstName: "James",
-      lastName: "Smith",
+      first_name: "James",
+      last_name: "Smith",
       posts: [
         {
           id: "abc3",

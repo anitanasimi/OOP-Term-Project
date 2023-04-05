@@ -3,8 +3,6 @@ import IController from "../../../interfaces/controller.interface";
 import IDiscoveryService from "../services/IDiscoveryService";
 import { database, post, posts } from "../../../model/fakeDB";
 
-const loggedInUser = database.users[0]
-
 class DiscoveryController implements IController {
   public path = "/";
   public router = Router();
@@ -17,43 +15,39 @@ class DiscoveryController implements IController {
 
   private initializeRoutes() {
     this.router.get(`${this.path}search`, this.search);
-    this.router.get(`${this.path}user/:id/follow`, this.follow);
-    this.router.get(`${this.path}user/:id/unfollow`, this.unfollow);
+    // this.router.get(`${this.path}user/:id/follow`, this.follow);
+    // this.router.get(`${this.path}user/:id/unfollow`, this.unfollow);
   }
 
-  private search = (req: Request, res: Response) => {
+  private search = async (req: Request, res: Response) => {
     const searchKeyword = req.query.query.toString();
-    const users = this.discoveryService.filterUsers(searchKeyword);
-    const posts = this.discoveryService.fitlerPosts(searchKeyword);
-    const postResults = [];
+    // const users = this.discoveryService.filterUsers(searchKeyword);
+    const posts = await this.discoveryService.fitlerPosts(searchKeyword);
+    const users = await this.discoveryService.filterUsers(searchKeyword);
 
-    if (posts) {
-      posts.forEach(post => {
-        const author = this.discoveryService.getUserByUserId(post.userId);
-        postResults.push({ post: post, author: author });
-      });
-    }
-    res.render("discovery/views/search", { postResults, users, loggedInUser });
+    // res.render("discovery/views/search", { postResults, users, loggedInUser });
+    console.log("rendering new page")
+    res.render("discovery/views/searchTest", { posts });
   };
 
-  private follow = (req: Request, res: Response) => {
-    const follower = loggedInUser
-    const targetUser = this.discoveryService.getUserByUserId(req.params.id)
-    if (!follower.following.includes(targetUser.username)) {
-      follower.following.push(targetUser.username)
-    }
-    res.redirect("/posts")
-  }
+  // private follow = (req: Request, res: Response) => {
+  //   const follower = loggedInUser
+  //   const targetUser = this.discoveryService.getUserByUserId(req.params.id)
+  //   if (!follower.following.includes(targetUser.username)) {
+  //     follower.following.push(targetUser.username)
+  //   }
+  //   res.redirect("/posts")
+  // }
 
-  private unfollow = (req: Request, res: Response) => {
-    const follower = loggedInUser
-    const targetUser = this.discoveryService.getUserByUserId(req.params.id)
-    if (follower.following.includes(targetUser.username)) {
-      const index = follower.following.indexOf(targetUser.username)
-      follower.following.splice(index, 1)
-    }
-    res.redirect("/posts")
-  }
+  // private unfollow = (req: Request, res: Response) => {
+  //   const follower = loggedInUser
+  //   const targetUser = this.discoveryService.getUserByUserId(req.params.id)
+  //   if (follower.following.includes(targetUser.username)) {
+  //     const index = follower.following.indexOf(targetUser.username)
+  //     follower.following.splice(index, 1)
+  //   }
+  //   res.redirect("/posts")
+  // }
 
 }
 

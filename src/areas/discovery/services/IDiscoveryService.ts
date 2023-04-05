@@ -1,13 +1,14 @@
 import IPost from "../../../interfaces/post.interface";
 import IUser from "../../../interfaces/user.interface";
-import { UserViewModel } from "../views/UserViewModel";
 
 export default interface IDiscoveryService {
-  getUserByUserId(username: string): IUser
+  getUserByUserId(username: string): Promise<IUser>
 
-  fitlerPosts(keyword: string): IPost[];
+  getPostAuthor(post: IPost): Promise<string>
 
-  filterUsers(keyword: string): IUser[];
+  fitlerPosts(keyword: string): Promise<{post: IPost, author: string}[]>;
+
+  filterUsers(keyword: string): Promise<IUser[]>;
 
   follow(user: IUser, target: IUser)
 

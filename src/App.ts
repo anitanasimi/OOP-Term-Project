@@ -2,14 +2,18 @@ import express from "express";
 import errorMiddleware from "./middleware/error.middleware";
 import Controller from "./interfaces/controller.interface";
 import dotenv from "dotenv";
+import { PrismaClient } from '@prisma/client'
+
 
 class App {
   private _app: express.Application;
+  private _prisma: PrismaClient;
   private readonly _port: number | string = process.env.PORT || 5001;
 
   constructor(controllers: Controller[]) {
     this._app = express();
     dotenv.config();
+    //this._prisma = new PrismaClient(); //this lets you do prisma hijinks, probably.
 
     this.initializeMiddlewares();
     this.initializeControllers(controllers);
