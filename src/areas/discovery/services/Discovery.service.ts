@@ -17,7 +17,7 @@ export default class DiscoveryService implements IDiscoveryService {
           followed: true,
         }
       })
-      return (user ? user : null)
+      return user
     } catch {
       throw new Error("Method not implemented.");
     }
@@ -49,7 +49,7 @@ export default class DiscoveryService implements IDiscoveryService {
         postsAndAuthors.push({ post, author })
       }
 
-      return (postsAndAuthors ? postsAndAuthors : null)
+      return postsAndAuthors
 
     } catch {
       throw new Error("filterPosts has failed to function");
@@ -71,7 +71,7 @@ export default class DiscoveryService implements IDiscoveryService {
         }
       })
 
-      return (users ? users : null)
+      return users
 
     } catch {
       throw new Error("filterUsers has failed to function");
