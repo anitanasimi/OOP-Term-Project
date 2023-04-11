@@ -1,6 +1,7 @@
 # Breakdown of Work
 
 ## Week of Mar 27 to Apr 2
+
 Gary Yu
 
 1. Completed set up for Passport and Prisma. Can now log in, sign up, and log out. Logged in user data is currently stored in localSessionStorage, so will still need to figure out how to change the store to Redis.
@@ -11,10 +12,22 @@ Gary Yu
 
 4. Error messages show up in webpage following any problems with user login or registration (incorrect credentials or non-unique email).
 
+Jamie Skidmore
+
+1. Got all functionality within the discovery area to work with the prisma db.
+
 ## Week of Mar 20 to Mar 26
+
 Gary Yu
 
 1. Completed Prisma schema.
+
+Jamie Skidmore
+
+1. Created filter/follow/unfollow branch
+2. Made a new area called "discovery" to handle filtering and following/unfollowing
+3. Added controllers and services in discovery
+4. Got getUserByUserId(), getPostAuthor(), fitlerPosts(), filterUsers(), addToFollowed(), removeFromFollowed(), addToFollowers(), removeFromFollowers(), follow(), unfollow() to work with the fakeDb.
 
 ## Week of Mar 13 to Mar 19
 
